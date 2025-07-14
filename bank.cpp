@@ -161,8 +161,31 @@ void ATMUser::displayBalance() {
 // Description: Transfer an amount to a recipientID (that exists)
 // recipientID: an std::string in the form of ####-#### 
 // amount: amount to be transferred
-void ATMUser::transferMoney(std::string recipientID, std::string message, double amount) {
-    return;
+void ATMUser::transferMoney(Users &users) {
+    std::string recipientID, message;
+    std::string senderID = getID();
+    ATMUser *user;
+    double amount;
+    // TODO:
+
+
+    // Prompt for the recipient ID (validate for invalid inputs as well)
+    // Validate if that ID exists or not (users.findUserByID(recipientID))
+    // Ask for the amount to be transferred (validate if the user's bal is enough)
+    // Asks if they want to leave an optional message   
+    // Confirm the details with the user
+    // """
+    // > Sending $1000 to 1002-1001 (Name)
+    // > Message: "For Lunch"
+    // > Confirm? (Y/N) 
+    // """
+    // Deduct the amount from current user using setBalance()
+    // Add the amount to the recipient using recipient->setBalance(recipient->getBalance + amount)
+    // Display confirmation that the money has been transferred
+
+
+    user->addLog("Recieved", amount, message, senderID);
+    addLog("Transferred", amount, message, recipientID);
 }
 
 // ====================== @Verceles ======================
@@ -414,23 +437,47 @@ void Users::addToAccountList(const std::string &id) {
 // viewLogs()
 // Description: Displays list of previous logs (withdrawals, deposits, etc)
 void ATMUser::viewLogs() {
-     return;
+    // TODO:
+
+    // Retrive the list of logs using getLogs() i.e. logs = getLogs()
+    // Check if the logs vector is empty
+    // IF YES: print: "No transactions found"
+    // Loop through the logs and print each transaction in formatted output. 
+    // You can use a helper function for this
+        // Type (e.g., Deposit)
+        // Amount (e.g., $5000)
+        // Message (e.g., "Initial balance" or "For groceries")
+        // Reference number
+        // Recipient or Sender ID
+    // Example Output:
+    //  [Deposit] $5000 | Msg: Initial Balance | Ref: 000001 | Rec: N/A 
+    //  [Transfer] $300 | Msg: N/A | Ref: 000002 | SenID: 1003-0002 
 }
 
 // addLog(type, amount, message (optional), ref (optional))
 // type: string label ("Withdraw", "Deposit")
 // amount: the amount involved
 // message: optional message for context
-// ref: transaction reference ID (don't mind)
-void ATMUser::addLog(std::string type, double amount, std::string message, std::string ref) {
-    
-    return;
+// ref: transaction reference ID (already created for you in generateRefNumber() method)
+// recipientID or senderID
+void ATMUser::addLog(std::string type, double amount, std::string message, std::string referenceID) {
+    std::string ref = generateRefNumber();
+    // TODO:
+
+    // Create a new log object: 
+    // Log newLog = Log(type, amount, message, ref, recipientID)
+    // Push back the log to the logs vector
+    // Print confirmation
 }
 
 // convertBalanceToOtherCurrency(currency)
 // currency: a string representing a currency code (e.g., "USD", "JPY", "PHP")
 // Output: prints equivalent amount in that currency
 void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
+    // TODO:
+
+    // Output example: "Your balance in USD: $50.56"
+    
     return;
 }
 
@@ -441,14 +488,24 @@ void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
 // Description: Prompts user for principal, rate, duration, Calculates payable amount.
 // Output:: Print payable amount with interest
 void ATMUser::loanCash() {
-    return;
+    // TODO:
+
+    // Asks user for input (principal, annual interest rate, loan duration)
+    // VALIDATE THE INPUTS (POSITIVE NUMBERS AND INTEGERS)
+    // Call calculateLoan(principal, rate, duration)
+    // Display: "Total Payable after x years: P11000.00"
+    // Asks if they want to borrow (Y/N)?
+    // IF SO: add this line: addLog("Loan", principal, "Loan borrowed", ref, "")
+
+    
 }
 
 // calculateLoan(principal, rate, durationYears)
 // Returns total loan payment due using simple interest formula
 // Output: double (total payable amount)
 double ATMUser::calculateLoan(double principal, double rate, double durationYears) {
-    return 0.0;
+    // Simple interest whatever
+    return 0.0; // Placeholder
 }
 
 void Menu::loanMenu(ATMUser &user) {
@@ -606,12 +663,16 @@ void Menu::myAccount(ATMUser &user) {
 
 void Menu::billsAndTransfer(ATMUser &user, Users &users) {
     // TODO
+
+    // Copy the above functions for guide (especially the myAccount inner menu)
 }
 
 void Menu::transactionLog(ATMUser &user) {
     // TODO
+    // Copy the above functions for guide (especially the myAccount inner menu)
 }
 
 void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID) {
     // TODO
+    // Copy the above functions for guide (especially the myAccount inner menu)
 }

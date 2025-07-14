@@ -6,6 +6,9 @@
 #include <string>
 
 // LOG CLASS ====================================
+
+class Users;
+
 class Log
 {
 private:
@@ -70,14 +73,14 @@ public:
     void deposit();
     void withdraw();
     void payBills();
-    void transferMoney(std::string recipientID, std::string message, double amount);
+    void transferMoney(Users &users);
     void loanCash();
     void displayBalance();
     void convertBalanceToOtherCurrency(std::string currency);
 
     void displayReceipt(std::string type, std::string ref, std::string recipientID);
     void viewLogs();
-    void addLog(std::string type, double amount, std::string message="", std::string ref="");
+    void addLog(std::string type, double amount, std::string message="", std::string referenceID="");
 
     void save();
     void load();
@@ -101,7 +104,6 @@ public:
     void addToAccountList(const std::string &id);
     ATMUser *loginPrompt();
     ATMUser *findUserByID(const std::string &id);
-    std::string generateRefNumber();
     std::string getNextUserID();
 };
 
