@@ -20,17 +20,17 @@ A console-based ATM system built in C++ that simulates basic banking operations.
 
 ## Folder Structure
 
-|- data/
-|-   |- accounts.csv
-|-   |- ref.txt
-|-   |- uid-counter.txt
-|-   |- [userID]/
-|         |- [userID]-data.csv
-|         |- [userID]-log.csv
-|- bank.cpp
-|- bank.h
-|- main.cpp
-|- utility.h
+|- data/ <br>
+|-   |- accounts.csv <br>
+|-   |- ref.txt <br>
+|-   |- uid-counter.txt <br>
+|-   |- [userID]/ <br>
+|         |- [userID]-data.csv <br>
+|         |- [userID]-log.csv <br>
+|- bank.cpp <br>
+|- bank.h <br>
+|- main.cpp <br>
+|- utility.h <br>
 
 ---
 
