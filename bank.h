@@ -74,7 +74,7 @@ public:
     void displayBalance();
     void convertBalanceToOtherCurrency(string currency);
 
-    void displayReceipt(string type, string ref, string recipientID);
+    void displayReceipt(string type, string ref, string recipientID, double amount);
     void viewLogs();
     void addLog(string type, double amount, string message="", string referenceID="");
 

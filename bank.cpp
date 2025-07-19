@@ -131,7 +131,7 @@ void ATMUser::deposit() {
                                                     << balance << ".\n";
         
         addLog("Deposit", amount);
-        displayReceipt("Deposit", generateRefNumber(), "");
+        displayReceipt("Deposit", generateRefNumber(), "", amount);
     }
 }
 
@@ -167,7 +167,7 @@ void ATMUser::withdraw() {
                                                                     << balance << ".\n";
         
         addLog("Withdraw", amount); 
-        displayReceipt("Withdraw", generateRefNumber(), "");    
+        displayReceipt("Withdraw", generateRefNumber(), "", amount);    
     }
 }
 
@@ -201,7 +201,7 @@ void ATMUser::payBills() {
 
         std::cout << "Transaction Success. You have paid Php. " << amount << ". Your new balance is Php. " << std::fixed << std::setprecision(2) << balance << ".\n";
         addLog(billName, amount);
-        displayReceipt(billName, generateRefNumber(), "");
+        displayReceipt(billName, generateRefNumber(), "", amount);
     }
 }
 
@@ -269,7 +269,7 @@ void ATMUser::transferMoney(Users &users) {
         
         user->addLog("Recieved", amount, message, senderID);
         addLog("Transferred", amount, message, recipientID);
-        displayReceipt("Money Transfer", generateRefNumber(), recipientID);
+        displayReceipt("Money Transfer", generateRefNumber(), recipientID, amount);
     }
 }
 
@@ -868,7 +868,7 @@ void Menu::transactionLog(ATMUser &user) {
     }
 }
 
-void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID) {
+void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID, double amount) {
     char choice;
     do {
         std::cout << "Do you want a copy of your receipt (Y/N)? ";
@@ -886,6 +886,7 @@ void ATMUser::displayReceipt(std::string type, std::string ref, std::string reci
         std::cout << BAR << "\n";
         std::cout << "TRANSACTION RECEIPT\n";
         std::cout << "Type        : " << type << "\n";
+        std::cout << "Amount (PHP): " << amount << "\n";
         std::cout << "User ID     : " << getID() << "\n";
         if (type == "Money Transfer"){
             std::cout << "Recipient ID: " << recipientID << "\n"; 
