@@ -540,6 +540,8 @@ void ATMUser::viewLogs() {
         std::cout << "| Msg: " << (msg.empty() ? "N/A" : msg);
 
         std::cout << "| Ref: " << log.getRefNumber();
+
+        std::cout << std::endl;
     }
 
     system("pause");
