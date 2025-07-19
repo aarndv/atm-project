@@ -5,15 +5,14 @@
 #include <sstream>
 #include <filesystem>
 
-#define MAX_DEPOSIT 200000
-#define MAX_WITHDRAW 50000
-#define MIN_DEPOSIT 100
-#define MIN_WTIHDRAW 100
-#define BAR "========================="
-#define BANK_NAME "HaBank Buhay"
+constexpr double MAX_DEPOSIT = 200000;
+constexpr double MAX_WITHDRAW = 50000;
+constexpr double MIN_DEPOSIT = 100;
+constexpr double MIN_WITHDRAW = 100;
+constexpr const char *BAR = "=========================";
+constexpr const char *BANK_NAME = "HaBank Buhay";
 
 // Constructors 
-
 ATMUser::ATMUser() {
     this->username = "";
     this->userID = "";
@@ -153,6 +152,7 @@ void ATMUser::payBills() {
 // Description: Prints current balance to terminal
 // Example Output: "Your current balance is: $12500.50"
 void ATMUser::displayBalance() {
+
     // Fetch current Balance
     // Output formatted balance (e.g. $1234.50)
 }
@@ -438,6 +438,24 @@ void Users::addToAccountList(const std::string &id) {
 // Description: Displays list of previous logs (withdrawals, deposits, etc)
 void ATMUser::viewLogs() {
     // TODO:
+    std::vector<Log> logs = getLogs(); 
+
+    if (logs.empty())
+    {
+        std::cout << "No transactions found.\n";
+        return;
+    }
+
+    for (const Log &log : logs) 
+    {
+        std::cout << "[" << log.getType() << "]";
+        std::cout << "Php. " << std::fixed << std::setprecision(2) << log.getAmount();
+
+        std::string msg = log.getMessage();
+        std::cout << "| Msg: " << (msg.empty() ? "N/A" : msg);
+
+        std::cout << "| Ref: " << log.getRefNumber();
+    }
 
     // Retrive the list of logs using getLogs() i.e. logs = getLogs()
     // Check if the logs vector is empty
@@ -461,8 +479,25 @@ void ATMUser::viewLogs() {
 // ref: transaction reference ID (already created for you in generateRefNumber() method)
 // recipientID or senderID
 void ATMUser::addLog(std::string type, double amount, std::string message, std::string referenceID) {
-    std::string ref = generateRefNumber();
+    std::string ref;
     // TODO:
+ 
+    if (referenceID.empty())
+    {
+        ref = generateRefNumber();
+    }
+    else
+    {
+        ref = referenceID;
+    }
+
+    if (message.empty())
+    {
+        message = "N/A";
+    }
+
+    Log newLog = Log(type, amount, message, ref);
+    logs.push_back(newLog);
 
     // Create a new log object: 
     // Log newLog = Log(type, amount, message, ref, recipientID)
@@ -476,7 +511,40 @@ void ATMUser::addLog(std::string type, double amount, std::string message, std::
 void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
     // TODO:
 
-    // Output example: "Your balance in USD: $50.56"
+    for (char &c : currency) c = toupper(c);
+
+    double rate = 1.0;
+    std::string symbol;
+
+    if (currency == "USD")
+    {
+        rate = 0.018;
+        symbol = "USD. ";
+    }
+    else if (currency == "JPY")
+    {
+        rate = 2.6;
+        symbol = "Jpy. ";
+    }
+    else if (currency == "SKW")
+    {
+        rate = 24.36;
+        symbol = "Skw. ";
+    }
+    else if (currency == "INR")
+    {
+        rate = 1.51;
+        symbol = "Inr";
+    }
+    else {
+        std::cout << "Unsupported currency code.\n";
+        return;
+    }
+
+    double converted = this->bal * rate;
+
+    std::cout   << "Your balance in " << symbol << ": " << std::fixed << std::setprecision(2)
+                << converted << '\n';
     
     return;
 }
@@ -674,5 +742,4 @@ void Menu::transactionLog(ATMUser &user) {
 
 void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID) {
     // TODO
-    // Copy the above functions for guide (especially the myAccount inner menu)
 }
