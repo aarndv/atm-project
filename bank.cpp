@@ -210,6 +210,7 @@ void ATMUser::payBills() {
 // Example Output: "Your current balance is: $12500.50"
 void ATMUser::displayBalance() {
     std::cout << "Balance Remaining: Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
+    system("pause");
     return;
 }
 
@@ -382,7 +383,7 @@ ATMUser *Users::loginPrompt() {
     int tries = 0;
 
     do {
-        std::cout << "Enter userID (####): ";
+        std::cout << "Enter userID (####-####): ";
         std::cin >> userID;
 
         user = findUserByID(userID);
@@ -541,19 +542,7 @@ void ATMUser::viewLogs() {
         std::cout << "| Ref: " << log.getRefNumber();
     }
 
-    // Retrive the list of logs using getLogs() i.e. logs = getLogs()
-    // Check if the logs vector is empty
-    // IF YES: print: "No transactions found"
-    // Loop through the logs and print each transaction in formatted output. 
-    // You can use a helper function for this
-        // Type (e.g., Deposit)
-        // Amount (e.g., $5000)
-        // Message (e.g., "Initial balance" or "For groceries")
-        // Reference number
-        // Recipient or Sender ID
-    // Example Output:
-    //  [Deposit] $5000 | Msg: Initial Balance | Ref: 000001 | Rec: N/A 
-    //  [Transfer] $300 | Msg: N/A | Ref: 000002 | SenID: 1003-0002 
+    system("pause");
 }
 
 // addLog(type, amount, message (optional), ref (optional))
@@ -727,6 +716,7 @@ int Menu::showLoginMenu() {
 // [5] - Exit
 void Menu::bankMenu(ATMUser &user, Users &users) {
     int choice;
+    users.saveAccounts();
     do {
         std::cout << BAR << '\n';
         std::cout << "[1] - My Account\n";
@@ -814,14 +804,68 @@ void Menu::myAccount(ATMUser &user) {
 // ===== @Coo & @Enriquez =====
 
 void Menu::billsAndTransfer(ATMUser &user, Users &users) {
-    // TODO
+    int choice;
+    do {
+        std::cout << "BILLS AND TRANSFER\n";
+        std::cout << BAR << "\n";
+        std::cout << "[1] - Pay Bills\n";
+        std::cout << "[2] - Transfer Money\n";
+        std::cout << "[3] - Return\n";
+        std::cout << "Choose an Option: "; 
+        std::cin >> choice;
 
-    // Copy the above functions for guide (especially the myAccount inner menu)
+        if (isInputNotValid()) {
+            std::cout << "Invalid input\n";
+            continue;
+        }
+
+        if (choice > 3 || choice < 1)
+            std::cout << "Invalid option.\n";
+
+    } while (choice > 3 || choice < 1);
+
+    switch (choice) 
+    {
+        case 1:
+            user.payBills();
+            break;
+        case 2:
+            user.transferMoney(users);
+            break;
+        case 3:
+            return;
+    }
 }
 
 void Menu::transactionLog(ATMUser &user) {
-    // TODO
-    // Copy the above functions for guide (especially the myAccount inner menu)
+    int choice;
+
+    do {
+        std::cout << "TRANSACTION LOGS\n";
+        std::cout << BAR << "\n";
+        std::cout << "[1] - View Logs\n";
+        std::cout << "[2] - Return\n";
+        std::cout << "Choose an Option: "; 
+        std::cin >> choice;
+
+        if (isInputNotValid()) {
+            std::cout << "Invalid input\n";
+            continue;
+        }
+
+        if (choice > 2 || choice < 1)
+            std::cout << "Invalid option.\n";
+
+    } while (choice > 2 || choice < 1);
+
+    switch (choice) 
+    {
+        case 1:
+            user.viewLogs();
+            break;
+        case 2:
+            return;
+    }
 }
 
 void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID) {
