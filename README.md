@@ -1,7 +1,7 @@
 
 # ATM System in C++
 
-A console-based ATM system built in C++ that simulates basic banking operations. The system supports account creation, PIN-encrypted login, deposits, withdrawals, bill payments, loan calculations, and transaction logging — all organized in a modular and team-friendly structure.
+A console-based ATM system built in C++ that simulates basic banking operations. The system supports account creation, PIN-encrypted login, deposits, withdrawals, bill payments, loan calculations, and transaction logging.
 
 ---
 
