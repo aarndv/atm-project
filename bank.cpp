@@ -10,6 +10,8 @@ constexpr double MAX_WITHDRAW = 50000;
 constexpr double MIN_DEPOSIT = 100;
 constexpr double MIN_WITHDRAW = 100;
 constexpr double MIN_BILL_AMOUNT = 100;
+constexpr double MIN_TRANSFER = 100;
+constexpr double MAX_TRANSFER = 50000;
 constexpr const char *BAR = "=========================";
 constexpr const char *BANK_NAME = "HaBank Buhay";
 constexpr const char *INVALID_MSG = "Invalid input.";
@@ -218,28 +220,56 @@ void ATMUser::displayBalance() {
 void ATMUser::transferMoney(Users &users) {
     std::string recipientID, message;
     std::string senderID = getID();
+    double balance;
+    char confirm;
     ATMUser *user;
     double amount;
-    // TODO:
 
+    std::cout << "Enter recipient ID (####-####): ";
+    std::getline(std::cin >> std::ws, recipientID);
+    user = users.findUserByID(recipientID);
 
-    // Prompt for the recipient ID (validate for invalid inputs as well)
-    // Validate if that ID exists or not (users.findUserByID(recipientID))
-    // Ask for the amount to be transferred (validate if the user's bal is enough)
-    // Asks if they want to leave an optional message   
-    // Confirm the details with the user
-    // """
-    // > Sending $1000 to 1002-1001 (Name)
-    // > Message: "For Lunch"
-    // > Confirm? (Y/N) 
-    // """
-    // Deduct the amount from current user using setBalance()
-    // Add the amount to the recipient using recipient->setBalance(recipient->getBalance + amount)
-    // Display confirmation that the money has been transferred
+    if (!user) {
+        std::cout << "Recipient ID does not exist.\n";
+        return;
+    }
 
+    while (true) {
+        std::cout << "Enter amount to transfer: ";
+        std::cin >> amount;
+        if (!isInputNotValid()) break;
+        std::cout << INVALID_MSG << std::endl;
+    }
+    if (amount < MIN_TRANSFER || amount > MAX_TRANSFER) 
+        std::cout << "Invalid transfer amount. Must be between " << MIN_TRANSFER<< " and " << MAX_TRANSFER << std::endl;
+    else {
+        std::cout << "Optional message (Press Enter to skip): ";
+        std::cin.ignore();
+        std::getline(std::cin, message);
+        std::cout << "Sending Php. " << amount << " to " << recipientID << " (" << user->getUsername() << ")\n";
+        std::cout << "Message: \"" << message << "\"\n";
+        do {
+            std::cout << "Confirm? (Y/N): ";
+            std::cin >> confirm;
+            if (tolower(confirm) != 'y' && tolower(confirm) != 'n') 
+                std::cout << "Must be (Y/N) only.\n";
+            if (isInputNotValid()) 
+                continue;
+        } while (tolower(confirm) != 'y' && tolower(confirm) != 'n');
+        if (tolower(confirm) != 'y') {
+            std::cout << "Transfer cancelled.\n";
+            return;
+        }
 
-    user->addLog("Recieved", amount, message, senderID);
-    addLog("Transferred", amount, message, recipientID);
+        balance -= amount;
+        setBalance(balance);
+        user->setBalance(user->getBalance() + amount);
+        std::cout << "Transfer successful. New balance: Php " <<  std::fixed << std::setprecision(2) << bal << ".\n";
+        
+        user->addLog("Recieved", amount, message, senderID);
+        addLog("Transferred", amount, message, recipientID);
+        displayReceipt("Money Transfer", generateRefNumber(), recipientID);
+    }
 }
 
 // ====================== @Verceles ======================
