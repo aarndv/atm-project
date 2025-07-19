@@ -9,8 +9,10 @@ constexpr double MAX_DEPOSIT = 200000;
 constexpr double MAX_WITHDRAW = 50000;
 constexpr double MIN_DEPOSIT = 100;
 constexpr double MIN_WITHDRAW = 100;
+constexpr double MIN_BILL_AMOUNT = 100;
 constexpr const char *BAR = "=========================";
 constexpr const char *BANK_NAME = "HaBank Buhay";
+constexpr const char *INVALID_MSG = "Invalid input.";
 
 // Constructors 
 ATMUser::ATMUser() {
@@ -99,36 +101,72 @@ void Log::setRecipientID(const std::string &rid) { recipientID = rid; }
 // deposit()
 // Example call: user.deposit();
 void ATMUser::deposit() {
+    char choice;
+    double balance;
     double amount;
-    // TODO:
-    
-    // Prompts the user for an amount
-    // Check if amount is within MIN/MAX deposit bounds
-    // Show an error if not valid and then return
-    // If valid, get current balance "double bal = getBalance();"
-    // ADD amount to current balance
-    // Use the method setBalance() to set it back. e.g., setBalance(bal)
-    // Display confirmation
-    
-    addLog("deposit", amount);
+
+    while (true)
+    {
+        std::cout << "Enter amount to deposit: ";
+        std::cin >> amount;
+        if (!isInputNotValid())
+            break;
+        std::cout << INVALID_MSG << std::endl;
+    }
+
+    if (amount < MIN_DEPOSIT)
+        std::cout << "Deposit amount must be greater than Php. " << MIN_DEPOSIT << '\n';
+    else if (amount > MAX_DEPOSIT) 
+        std::cout << "Deposit amount must be less than Php. " << MAX_DEPOSIT << '\n';
+    else {
+        balance = getBalance();
+        balance += amount;
+        setBalance(balance);
+
+        std::cout << "You have deposited Php. " << amount << ".\n";
+        std::cout << "Your new balance is Php. "    << std::fixed 
+                                                    << std::setprecision(2)
+                                                    << balance << ".\n";
+        
+        addLog("Deposit", amount);
+        displayReceipt("Deposit", generateRefNumber(), "");
+    }
 }
 
 // withdraw()
 // Example call: user.withdraw();
 void ATMUser::withdraw() {
     double amount;
-    // TODO:
+    double balance;
+    balance = getBalance();
 
-    // Show the balance by calling the show balance method
-    // Prompts the user how much they want to withdraw
-    // Check if amount is within MIN/MAX deposit limits
-    // Show an error if not valid and then return
-    // If valid, get current balance using getBalance();
-    // Subtract amount to current balance
-    // Use the method setBalance() to set it back. e.g., setBalance(bal)
-    // Display confirmation
-    
-    addLog("withdraw", amount);
+    std::cout << "Your current balance is: Php. " << bal << ".\n";
+    while (true)
+    {
+        std::cout << "Enter amount to withdraw: ";
+        std::cin >> amount;
+        if (!isInputNotValid())
+            break;
+        std::cout << INVALID_MSG << std::endl;
+    }
+
+    if (amount < MIN_WITHDRAW) 
+        std::cout << "Withdraw must be greater than Php. " << MIN_WITHDRAW << '\n';
+    else if (amount > MAX_WITHDRAW)
+        std::cout << "Withdraw must be less than Php. " << MAX_WITHDRAW << '\n';
+    else if (amount > balance)
+        std::cout << "Insufficient balance to withdraw.\n";
+    else {
+        balance -= amount;
+        setBalance(balance);
+
+        std::cout << "Withdrawal successful. New balance: Php. "    << std::fixed 
+                                                                    << std::setprecision(2)
+                                                                    << balance << ".\n";
+        
+        addLog("Withdraw", amount); 
+        displayReceipt("Withdraw", generateRefNumber(), "");    
+    }
 }
 
 // payBills()
@@ -137,24 +175,40 @@ void ATMUser::payBills() {
     // TODO:
     std::string billName;
     double amount;
+    double balance;
+    balance = getBalance();
 
+    std::cout << "Your current balance is: Php. " << balance << ".\n";
+    std::cout << "Enter bill name: ";
+    std::getline(std::cin >> std::ws, billName);
+    while (true) {
+        std::cout << "Enter amount to pay (Php): ";
+        std::cin >> amount;
+        if (!isInputNotValid())
+            break;
+        std::cout << INVALID_MSG << std::endl;
+    }
 
-    // Ask for bill name and amount
-    // Check if the user has sufficient balance
-    // If not, print error and return
-    // Deduct the amount and update balance
-    // Display confirmation
+    if (amount < MIN_BILL_AMOUNT) 
+        std::cout << "Invalid bill amount. Must be greater than Php. " << MIN_DEPOSIT << ".\n";
+    else if (amount > balance) 
+        std::cout << "Transaction failed: Insufficient Balance.\n";
+    else {
+        balance -= amount;
+        setBalance(balance);
 
-    addLog(billName, amount);
+        std::cout << "Transaction Success. You have paid Php. " << amount << ". Your new balance is Php. " << std::fixed << std::setprecision(2) << balance << ".\n";
+        addLog(billName, amount);
+        displayReceipt(billName, generateRefNumber(), "");
+    }
 }
 
 // displayBalance()
 // Description: Prints current balance to terminal
 // Example Output: "Your current balance is: $12500.50"
 void ATMUser::displayBalance() {
-
-    // Fetch current Balance
-    // Output formatted balance (e.g. $1234.50)
+    std::cout << "Balance Remaining: Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
+    return;
 }
 
 // transferMoney()
@@ -349,7 +403,7 @@ ATMUser *Users::findUserByID(const std::string &id) {
         if (user.getID() == id) 
             return &user;
     }
-    return NULL;
+    return nullptr;
 }
 
 bool Users::addAccount() {
@@ -594,7 +648,7 @@ bool Menu::mainMenuGreetings() {
         std::cout << "Use ATM (Y/N): ";
         std::cin >> choice;
         
-        if (input_validation()) {
+        if (isInputNotValid()) {
             std::cout << "Invalid Input.\n";
             continue;
         }
@@ -624,7 +678,7 @@ int Menu::showLoginMenu() {
         std::cout << "Choose an Option: ";
         std::cin >> choice;
 
-        if (input_validation()) {
+        if (isInputNotValid()) {
             std::cout << "Invalid input\n";
             continue;
         }        
@@ -653,7 +707,7 @@ void Menu::bankMenu(ATMUser &user, Users &users) {
         std::cout << "Choose an Option: ";
         std::cin >> choice;
 
-        if (input_validation()) {
+        if (isInputNotValid()) {
             std::cout << "Invalid Input.\n";
             continue;
         }
@@ -701,7 +755,7 @@ void Menu::myAccount(ATMUser &user) {
         std::cout << "Choose an Option: "; 
         std::cin >> choice;
 
-        if (input_validation()) {
+        if (isInputNotValid()) {
             std::cout << "Invalid input\n";
             continue;
         }
@@ -741,5 +795,33 @@ void Menu::transactionLog(ATMUser &user) {
 }
 
 void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID) {
-    // TODO
+    char choice;
+    do {
+        std::cout << "Do you want a copy of your receipt (Y/N)? ";
+        std::cin >> choice; 
+        if (isInputNotValid()) {
+            std::cout << INVALID_MSG << std::endl;
+            continue;
+        }
+        if (tolower(choice) != 'n' && tolower(choice) != 'y')
+            std::cout << "Must be (Y/N) only.\n";
+    } while (tolower(choice) != 'n' && tolower(choice) != 'y');
+    if (tolower(choice) == 'n') return;
+    else {
+        std::cout << "\n===" << BANK_NAME <<"===\n";
+        std::cout << BAR << "\n";
+        std::cout << "TRANSACTION RECEIPT\n";
+        std::cout << "Type        : " << type << "\n";
+        std::cout << "User ID     : " << getID() << "\n";
+        if (type == "Money Transfer"){
+            std::cout << "Recipient ID: " << recipientID << "\n"; 
+        }  
+        std::cout << "Username    : " << getUsername() << "\n";
+        std::cout << "Reference # : " << ref << "\n";
+        std::cout << "Your New Balance is Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
+        std::cout << "Thank you!\n";
+        
+        system("pause");
+    }
+
 }
