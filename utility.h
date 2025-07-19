@@ -42,11 +42,11 @@ std::string generateRefNumber() {
     
     newVal = oldVal + 1;
     std::ofstream fout(refPath);
-    if (fin.is_open()) {
+    if (fout.is_open()) {
         fout << newVal;
         fout.close();
     } else {
-        std::cerr << "[ERORR] Could not save reference number.\n";
+        std::cerr << "[ERROR] Could not save reference number.\n";
     }
 
     std::ostringstream oss;
