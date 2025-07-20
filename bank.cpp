@@ -21,6 +21,7 @@ constexpr int PIN_LENGTH = 4;
 constexpr const char *BAR = "=========================";
 constexpr const char *BANK_NAME = "HaBank Buhay";
 constexpr const char *INVALID_MSG = "Invalid input.";
+constexpr const char *INVALID_MSG_AMOUNT = "That's not a valid number. Please enter a numerical value.";
 
 // Constructors 
 ATMUser::ATMUser() {
@@ -107,14 +108,16 @@ void ATMUser::deposit(Users &users) {
     char choice;
     double balance;
     double amount;
+    balance = getBalance();
 
+    std::cout << "Your current balance is: Php. " << balance << ".\n";
     while (true)
     {
         std::cout << "Enter amount to deposit: ";
         std::cin >> amount;
         if (!isInputNotValid())
             break;
-        std::cout << INVALID_MSG << std::endl;
+        std::cout << INVALID_MSG_AMOUNT << std::endl;
     }
 
     if (amount < MIN_DEPOSIT)
@@ -122,7 +125,6 @@ void ATMUser::deposit(Users &users) {
     else if (amount > MAX_DEPOSIT) 
         std::cout << "Deposit amount must be less than Php. " << MAX_DEPOSIT << '\n';
     else {
-        balance = getBalance();
         balance += amount;
         setBalance(balance);
 
@@ -141,14 +143,14 @@ void ATMUser::withdraw(Users &users) {
     double balance;
     balance = getBalance();
 
-    std::cout << "Your current balance is: Php. " << bal << ".\n";
+    std::cout << "Your current balance is: Php. " << balance << ".\n";
     while (true)
     {
         std::cout << "Enter amount to withdraw: ";
         std::cin >> amount;
         if (!isInputNotValid())
             break;
-        std::cout << INVALID_MSG << std::endl;
+        std::cout << INVALID_MSG_AMOUNT << std::endl;
     }
 
     if (amount < MIN_WITHDRAW) 
@@ -184,7 +186,7 @@ void ATMUser::payBills(Users &users) {
         std::cin >> amount;
         if (!isInputNotValid())
             break;
-        std::cout << INVALID_MSG << std::endl;
+        std::cout << INVALID_MSG_AMOUNT << std::endl;
     }
 
     if (amount < MIN_BILL_AMOUNT) 
