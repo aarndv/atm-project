@@ -66,17 +66,17 @@ public:
 
     bool validatePin(const string &inputPin);
 
-    void deposit();
-    void withdraw();
-    void payBills();
+    void deposit(Users &users);
+    void withdraw(Users &users);
+    void payBills(Users &users);
     void transferMoney(Users &users);
-    void loanCash();
+    void loanCash(Users &users);
     void displayBalance();
     void convertBalanceToOtherCurrency(string currency);
 
-    void displayReceipt(string type, string ref, string recipientID, double amount);
+    void displayReceipt();
     void viewLogs();
-    void addLog(string type, double amount, string message="", string referenceID="");
+    void addLog(Users &users, string type, double amount, string message="", string referenceID="");
 
     void save();
     void load();
@@ -101,6 +101,7 @@ public:
     ATMUser *loginPrompt();
     ATMUser *findUserByID(const string &id);
     string getNextUserID();
+    string generateRefNumber();
 };
 
 class Menu {
@@ -108,10 +109,10 @@ public:
     Menu();
     bool mainMenuGreetings();
     void bankMenu(ATMUser &user, Users &users);
-    void myAccount(ATMUser &user);
+    void myAccount(ATMUser &user, Users &users);
     void billsAndTransfer(ATMUser &user, Users &users);
-    void loanMenu(ATMUser &user);
-    void transactionLog(ATMUser &user);
+    void loanMenu(ATMUser &user, Users &users);
+    void transactionLog(ATMUser &user, Users &users);
     int showLoginMenu();
 };
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include <filesystem>
 
 constexpr double MAX_DEPOSIT = 200000;
@@ -12,6 +13,10 @@ constexpr double MIN_WITHDRAW = 100;
 constexpr double MIN_BILL_AMOUNT = 100;
 constexpr double MIN_TRANSFER = 100;
 constexpr double MAX_TRANSFER = 50000;
+constexpr int MAX_ID_TRIES = 3;
+constexpr int PIN_LENGTH = 4;
+
+// Helper Constants
 constexpr const char *BAR = "=========================";
 constexpr const char *BANK_NAME = "HaBank Buhay";
 constexpr const char *INVALID_MSG = "Invalid input.";
@@ -97,12 +102,7 @@ void Log::setMessage(const std::string &msg) { message = msg; }
 void Log::setRefNumber(const std::string &ref) { refNumber = ref; }
 void Log::setRecipientID(const std::string &rid) { recipientID = rid; }
 
-// ==================== @Enriquez & @Coo ======================
-// Handles: Withdraw, Deposit, Pay Bills, and Display of Balance
-
-// deposit()
-// Example call: user.deposit();
-void ATMUser::deposit() {
+void ATMUser::deposit(Users &users) {
     char choice;
     double balance;
     double amount;
@@ -130,14 +130,12 @@ void ATMUser::deposit() {
                                                     << std::setprecision(2)
                                                     << balance << ".\n";
         
-        addLog("Deposit", amount);
-        displayReceipt("Deposit", generateRefNumber(), "", amount);
+        addLog(users, "Deposit", amount);
+        displayReceipt();
     }
 }
 
-// withdraw()
-// Example call: user.withdraw();
-void ATMUser::withdraw() {
+void ATMUser::withdraw(Users &users) {
     double amount;
     double balance;
     balance = getBalance();
@@ -166,15 +164,12 @@ void ATMUser::withdraw() {
                                                                     << std::setprecision(2)
                                                                     << balance << ".\n";
         
-        addLog("Withdraw", amount); 
-        displayReceipt("Withdraw", generateRefNumber(), "", amount);    
+        addLog(users, "Withdraw", amount); 
+        displayReceipt();    
     }
 }
 
-// payBills()
-// Description: Prompts for bill type and amount, deducts if valid
-void ATMUser::payBills() {
-    // TODO:
+void ATMUser::payBills(Users &users) {
     std::string billName;
     double amount;
     double balance;
@@ -200,24 +195,18 @@ void ATMUser::payBills() {
         setBalance(balance);
 
         std::cout << "Transaction Success. You have paid Php. " << amount << ". Your new balance is Php. " << std::fixed << std::setprecision(2) << balance << ".\n";
-        addLog(billName, amount);
-        displayReceipt(billName, generateRefNumber(), "", amount);
+        addLog(users, billName, amount);
+        displayReceipt();
     }
 }
 
-// displayBalance()
-// Description: Prints current balance to terminal
-// Example Output: "Your current balance is: $12500.50"
 void ATMUser::displayBalance() {
     std::cout << "Balance Remaining: Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
+    std::cout << std::endl;
     system("pause");
     return;
 }
 
-// transferMoney()
-// Description: Transfer an amount to a recipientID (that exists)
-// recipientID: an std::string in the form of ####-#### 
-// amount: amount to be transferred
 void ATMUser::transferMoney(Users &users) {
     std::string recipientID, message;
     std::string senderID = getID();
@@ -267,14 +256,11 @@ void ATMUser::transferMoney(Users &users) {
         user->setBalance(user->getBalance() + amount);
         std::cout << "Transfer successful. New balance: Php " <<  std::fixed << std::setprecision(2) << bal << ".\n";
         
-        user->addLog("Recieved", amount, message, senderID);
-        addLog("Transferred", amount, message, recipientID);
-        displayReceipt("Money Transfer", generateRefNumber(), recipientID, amount);
+        user->addLog(users, "Recieved", amount, message, senderID);
+        addLog(users, "Transferred", amount, message, recipientID);
+        displayReceipt();
     }
 }
-
-// ====================== @Verceles ======================
-// Handles: User Login, FILE I/O, Saving/Loading, and Internal Transfers
 
 bool ATMUser::validatePin(const std::string &inputPin) {
     return decryptPin(PIN) == inputPin;
@@ -379,7 +365,7 @@ void ATMUser::loadLogs() {
 ATMUser *Users::loginPrompt() {
     std::string userID, enteredPIN;
     bool idFound = false, PINCorrect = false;
-    ATMUser *user;
+    ATMUser *user = nullptr;
     int tries = 0;
 
     do {
@@ -439,16 +425,31 @@ ATMUser *Users::findUserByID(const std::string &id) {
 
 bool Users::addAccount() {
     std::string name, pin;
-    std::cout << "Enter desired username: ";
-    std::getline(std::cin>>std::ws, name);
+
+    while (true) {
+        std::cout << "Enter desired username: ";
+        std::getline(std::cin>>std::ws, name);
+
+        if (isNameValid(name)) break;
+        else {
+            std::cout << "[INVALID INPUT] Only 4 to 64 characters allowed. Try again.\n";
+        }
+    }
 
     for (ATMUser &user : userList) {
         if (user.getUsername() == name)
             return false;
     }
 
-    std::cout << "Enter PIN (####): ";
-    std::cin >> pin;
+    while (true) {
+        std::cout << "Enter a 4-character PIN (####): ";
+        std::getline(std::cin >> std::ws, pin);
+
+        if (isPinValid(pin)) break;
+        else {
+            std::cout << "[INVALID INPUT] Only 4 alphanumeric characters allowed. Try again.\n";    
+        }
+    }
 
     std::string newID = getNextUserID();
 
@@ -463,6 +464,13 @@ bool Users::addAccount() {
     addToAccountList(newID);
 
     return true;
+}
+
+std::string Users::generateRefNumber() {
+    std::ostringstream oss;
+    oss << std::setw(6) << std::setfill('0') << refCounter;
+    refCounter++;
+    return oss.str();
 }
 
 void Users::saveAccounts() {
@@ -516,13 +524,7 @@ void Users::addToAccountList(const std::string &id) {
     }
 }
 
-// ====================== @Grutas ====================== 
-// Handles: Transaction Logs and Currency Conversion
-
-// viewLogs()
-// Description: Displays list of previous logs (withdrawals, deposits, etc)
 void ATMUser::viewLogs() {
-    // TODO:
     std::vector<Log> logs = getLogs(); 
 
     if (logs.empty())
@@ -544,22 +546,15 @@ void ATMUser::viewLogs() {
         std::cout << std::endl;
     }
 
+    std::cout << std::endl;
     system("pause");
 }
 
-// addLog(type, amount, message (optional), ref (optional))
-// type: string label ("Withdraw", "Deposit")
-// amount: the amount involved
-// message: optional message for context
-// ref: transaction reference ID (already created for you in generateRefNumber() method)
-// recipientID or senderID
-void ATMUser::addLog(std::string type, double amount, std::string message, std::string referenceID) {
+void ATMUser::addLog(Users &users, std::string type, double amount, std::string message, std::string referenceID) {
     std::string ref;
-    // TODO:
- 
     if (referenceID.empty())
     {
-        ref = generateRefNumber();
+        ref = users.generateRefNumber();
     }
     else
     {
@@ -573,11 +568,6 @@ void ATMUser::addLog(std::string type, double amount, std::string message, std::
 
     Log newLog = Log(type, amount, message, ref);
     logs.push_back(newLog);
-
-    // Create a new log object: 
-    // Log newLog = Log(type, amount, message, ref, recipientID)
-    // Push back the log to the logs vector
-    // Print confirmation
 }
 
 // convertBalanceToOtherCurrency(currency)
@@ -630,7 +620,7 @@ void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
 // LoanCash()
 // Description: Prompts user for principal, rate, duration, Calculates payable amount.
 // Output:: Print payable amount with interest
-void ATMUser::loanCash() {
+void ATMUser::loanCash(Users &users) {
     // TODO:
 
     // Asks user for input (principal, annual interest rate, loan duration)
@@ -651,16 +641,10 @@ double ATMUser::calculateLoan(double principal, double rate, double durationYear
     return 0.0; // Placeholder
 }
 
-void Menu::loanMenu(ATMUser &user) {
+void Menu::loanMenu(ATMUser &user, Users &users) {
     return;
 }
 
-// ====================================================================
-
-// mainMenuGreetings()
-// Description: Prints welcome message go to mainMenu when Y and quits when N
-// <greetings>
-// Would you like to use the <name>'s ATM (Y/N): 
 bool Menu::mainMenuGreetings() {
     char choice;
 
@@ -684,12 +668,6 @@ bool Menu::mainMenuGreetings() {
     return false;
 }
 
-// showLoginMenu()
-// Returns user choice: 1 = login, 2 = Create Account, 3 = Exit
-// Main Menu
-// [1] - Login
-// [2] - Create Account
-// [3] - Exit
 int Menu::showLoginMenu() {
     int choice;
     do {
@@ -710,12 +688,6 @@ int Menu::showLoginMenu() {
     return choice;
 }
 
-// bankMenu()
-// [1] - My Account 
-// [2] - Bills & Transfer
-// [3] - Loan Services
-// [4] - Transaction Log
-// [5] - Exit
 void Menu::bankMenu(ATMUser &user, Users &users) {
     int choice;
     users.saveAccounts();
@@ -740,16 +712,16 @@ void Menu::bankMenu(ATMUser &user, Users &users) {
     switch (choice)
     {
         case 1: 
-            myAccount(user);
+            myAccount(user, users);
             break;
         case 2:
             billsAndTransfer(user, users);
             break;
         case 3:
-            loanMenu(user);
+            loanMenu(user, users);
             break;
         case 4:
-            transactionLog(user);
+            transactionLog(user, users);
             break;
         case 5:
             return;
@@ -758,12 +730,7 @@ void Menu::bankMenu(ATMUser &user, Users &users) {
     bankMenu(user, users);
 }
 
-// myAccount()
-// [1] - Withdraw
-// [2] - Deposit
-// [3] - Balance
-// [4] - Return
-void Menu::myAccount(ATMUser &user) {
+void Menu::myAccount(ATMUser &user, Users &users) {
     int choice;
     float amount;
 
@@ -790,10 +757,10 @@ void Menu::myAccount(ATMUser &user) {
     switch (choice) 
     {
         case 1:
-            user.withdraw();
+            user.withdraw(users);
             break;
         case 2:
-            user.deposit();
+            user.deposit(users);
             break;
         case 3:
             user.displayBalance();
@@ -802,8 +769,6 @@ void Menu::myAccount(ATMUser &user) {
             return;
     }
 }
-
-// ===== @Coo & @Enriquez =====
 
 void Menu::billsAndTransfer(ATMUser &user, Users &users) {
     int choice;
@@ -829,7 +794,7 @@ void Menu::billsAndTransfer(ATMUser &user, Users &users) {
     switch (choice) 
     {
         case 1:
-            user.payBills();
+            user.payBills(users);
             break;
         case 2:
             user.transferMoney(users);
@@ -839,7 +804,7 @@ void Menu::billsAndTransfer(ATMUser &user, Users &users) {
     }
 }
 
-void Menu::transactionLog(ATMUser &user) {
+void Menu::transactionLog(ATMUser &user, Users &users) {
     int choice;
 
     do {
@@ -870,7 +835,8 @@ void Menu::transactionLog(ATMUser &user) {
     }
 }
 
-void ATMUser::displayReceipt(std::string type, std::string ref, std::string recipientID, double amount) {
+void ATMUser::displayReceipt() {
+    Log log_item = logs.back();
     char choice;
     do {
         std::cout << "Do you want a copy of your receipt (Y/N)? ";
@@ -887,18 +853,18 @@ void ATMUser::displayReceipt(std::string type, std::string ref, std::string reci
         std::cout << "\n===" << BANK_NAME <<"===\n";
         std::cout << BAR << "\n";
         std::cout << "TRANSACTION RECEIPT\n";
-        std::cout << "Type        : " << type << "\n";
-        std::cout << "Amount (PHP): " << amount << "\n";
+        std::cout << "Type        : " << log_item.getType() << "\n";
+        std::cout << "Amount (PHP): " << log_item.getAmount() << "\n";
         std::cout << "User ID     : " << getID() << "\n";
-        if (type == "Money Transfer"){
-            std::cout << "Recipient ID: " << recipientID << "\n"; 
+        if (log_item.getType() == "Transferred"){ 
+            std::cout << "Recipient ID: " << log_item.getRecipientID() << "\n"; 
         }  
         std::cout << "Username    : " << getUsername() << "\n";
-        std::cout << "Reference # : " << ref << "\n";
+        std::cout << "Reference # : " << log_item.getRefNumber() << "\n";
         std::cout << "Your New Balance is Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
         std::cout << "Thank you!\n";
         
+        std::cout << std::endl;
         system("pause");
     }
-
 }
