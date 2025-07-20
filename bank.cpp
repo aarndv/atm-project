@@ -227,8 +227,17 @@ void ATMUser::transferMoney(Users &users) {
     while (true) {
         std::cout << "Enter amount to transfer: ";
         std::cin >> amount;
-        if (!isInputNotValid()) break;
-        std::cout << INVALID_MSG << std::endl;
+        if (isInputNotValid()) {
+            std::cout << INVALID_MSG << std::endl;
+            continue;
+        }
+        else if (amount > getBalance()) {
+            std::cout << "Insufficient Balance. Try again.\n";
+            continue;
+        }
+        else {
+            break;
+        }
     }
     if (amount < MIN_TRANSFER || amount > MAX_TRANSFER) 
         std::cout << "Invalid transfer amount. Must be between " << MIN_TRANSFER<< " and " << MAX_TRANSFER << std::endl;
@@ -527,6 +536,7 @@ void Users::addToAccountList(const std::string &id) {
 
 void ATMUser::viewLogs() {
     std::vector<Log> logs = getLogs(); 
+    std::string type;
 
     if (logs.empty())
     {
@@ -536,15 +546,17 @@ void ATMUser::viewLogs() {
 
     for (const Log &log : logs) 
     {
-        std::cout << "[" << log.getType() << "]";
-        std::cout << "Php. " << std::fixed << std::setprecision(2) << log.getAmount();
+        type = "[" + log.getType() + "]";
+        std::cout   << std::setw(16) << std::left << type 
+                    << std::setw(6) << std::left << "| Php." 
+                    << std::setw(10) << std::left << log.getAmount() << std::endl;
 
         std::string msg = log.getMessage();
-        std::cout << "| Msg: " << (msg.empty() ? "N/A" : msg);
+        std::cout   << std::setw(64) << std::left << (msg.empty() ? "N/A" : msg) << std::endl;
+        std::cout   << std::setw(6) << std::left << "| Ref: " 
+                    << std::setw(10) << std::left << log.getRefNumber();
 
-        std::cout << "| Ref: " << log.getRefNumber();
-
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
     }
 
     std::cout << std::endl;
