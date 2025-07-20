@@ -2,6 +2,7 @@
 #define UTILITY_H
 
 #include <iostream>
+#include <limits>
 #include <iomanip>
 #include <fstream>
 
@@ -42,6 +43,12 @@ std::string padNumber(int number, int width) {
 
 std::string formatID(int prefix, int serial) {
     return padNumber(prefix, 4) + "-" + padNumber(serial, 4);
+}
+
+void systemPause() {
+    std::cout << "Press Enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+    std::cin.get(); 
 }
 
 #endif

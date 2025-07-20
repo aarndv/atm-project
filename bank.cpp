@@ -206,7 +206,7 @@ void ATMUser::payBills(Users &users) {
 void ATMUser::displayBalance() {
     std::cout << "Balance Remaining: Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
     std::cout << std::endl;
-    system("pause");
+    systemPause();
     return;
 }
 
