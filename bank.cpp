@@ -447,6 +447,7 @@ ATMUser *Users::findUserByID(const std::string &id) {
 
 bool Users::addAccount() {
     std::string name, pin;
+    double initialBal=0;
 
     while (true) {
         std::cout << "Enter desired username: ";
@@ -473,9 +474,23 @@ bool Users::addAccount() {
         }
     }
 
+    while (true) {
+        std::cout << "Enter initial balance for your new account: Php. ";
+        std::cin >> initialBal;
+        if (isInputNotValid()) {
+            std::cout << "Invalid input. Must be an amount of money. Try again.\n";
+        }
+        else if (initialBal <= 0) {
+            std::cout << "Amount must be a positive number. Try again.\n";
+        }
+        else {
+            break;
+        }
+    }
+
     std::string newID = getNextUserID();
 
-    std::cout << "Your userID is " << newID << "\n";
+    std::cout << "Congratulations! Your account has been successfully created. Your User ID is: " << newID << ". Please keep it safe.\n";
 
     ATMUser newUser(newID, name, pin);
     userList.push_back(newUser);
