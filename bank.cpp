@@ -587,7 +587,7 @@ void ATMUser::viewLogs() {
     }
 
     std::cout << std::endl;
-    system("pause");
+    systemPause();
 }
 
 void ATMUser::addLog(Users &users, std::string type, double amount, std::string message, std::string referenceID) {
@@ -896,6 +896,6 @@ void ATMUser::displayReceipt() {
         std::cout << "Thank you!\n";
         
         std::cout << std::endl;
-        system("pause");
+        systemPause();
     }
 }
