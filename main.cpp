@@ -26,11 +26,11 @@ int main()
             case 2:
                 created = bank.addAccount();
                 if (!created) {
-                    std::cout << "That username is already taken.\n";
+                    std::cout << "That username is already taken. Please choose another one.\n";
                 }
                 break;
             case 3:
-                std::cout << "Exiting program.\n";
+                std::cout << "Thank you for banking with HaBank Buhay. Have a great day!\n";
                 return 0;
                 break;
             default:
