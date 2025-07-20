@@ -492,7 +492,7 @@ bool Users::addAccount() {
 
     std::cout << "Congratulations! Your account has been successfully created. Your User ID is: " << newID << ". Please keep it safe.\n";
 
-    ATMUser newUser(newID, name, pin);
+    ATMUser newUser(newID, name, pin, initialBal);
     userList.push_back(newUser);
 
     newUser.save();
@@ -681,7 +681,9 @@ bool Menu::mainMenuGreetings() {
 
     std::cout << "Welcome to " << BANK_NAME << "! Your trusted banking partner.\n";
     std::cout << std::endl;
-    std::cout << "===" << BANK_NAME <<"===\n"; 
+    std::cout << BAR << std::endl;
+    std::cout << "=== " << BANK_NAME <<" ===\n"; 
+    std::cout << BAR << std::endl;
     do {
         std::cout << "Use ATM (Y/N)? ";
         std::cin >> choice;
