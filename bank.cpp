@@ -251,10 +251,11 @@ void ATMUser::transferMoney(Users &users) {
             return;
         }
 
+        balance = getBalance();
         balance -= amount;
         setBalance(balance);
         user->setBalance(user->getBalance() + amount);
-        std::cout << "Transfer successful. New balance: Php " <<  std::fixed << std::setprecision(2) << bal << ".\n";
+        std::cout << "Transfer successful. New balance: Php " <<  std::fixed << std::setprecision(2) << balance << ".\n";
         
         user->addLog(users, "Recieved", amount, message, senderID);
         addLog(users, "Transferred", amount, message, recipientID);
@@ -384,7 +385,7 @@ ATMUser *Users::loginPrompt() {
         std::cin >> enteredPIN;
     
         if (user && user->validatePin(enteredPIN)) {
-            std::cout << "Login successful.\n";
+            std::cout << "Login successful. Welcome, " << user->getUsername() << "!\n";
             PINCorrect = true;
         } else {
             std::cout << "Invalid PIN.\n";
@@ -552,21 +553,14 @@ void ATMUser::viewLogs() {
 
 void ATMUser::addLog(Users &users, std::string type, double amount, std::string message, std::string referenceID) {
     std::string ref;
-    if (referenceID.empty())
-    {
-        ref = users.generateRefNumber();
-    }
-    else
-    {
-        ref = referenceID;
-    }
+    ref = users.generateRefNumber();
 
     if (message.empty())
     {
         message = "N/A";
     }
 
-    Log newLog = Log(type, amount, message, ref);
+    Log newLog = Log(type, amount, message, ref, referenceID);
     logs.push_back(newLog);
 }
 

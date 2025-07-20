@@ -17,7 +17,7 @@ private:
 
 public:
     Log();
-    Log(string type, double amount, string message="", string ref="", string recipient="");
+    Log(string type, double amount, string message="", string ref="", string referenceID="");
 
     void displayReceipt() const;
 
