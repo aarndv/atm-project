@@ -383,8 +383,16 @@ ATMUser *Users::loginPrompt() {
         std::cin >> userID;
 
         user = findUserByID(userID);
-        if (!user)
+        if (!user) {
             std::cout << "userID does not exist.\n";
+            tries++;
+            if (tries >= MAX_ID_TRIES) {
+                std::cout << "\nMaximum failed User ID attempts reached.\n";
+                std::cout << "Exiting.\n";
+                return nullptr;
+            }
+
+        }
         else 
             idFound = true;
     } while (!idFound);
@@ -635,8 +643,6 @@ void ATMUser::loanCash(Users &users) {
     // Display: "Total Payable after x years: P11000.00"
     // Asks if they want to borrow (Y/N)?
     // IF SO: add this line: addLog("Loan", principal, "Loan borrowed", ref, "")
-
-    
 }
 
 // calculateLoan(principal, rate, durationYears)
@@ -656,7 +662,7 @@ bool Menu::mainMenuGreetings() {
 
     std::cout << "===" << BANK_NAME <<"===\n"; 
     do {
-        std::cout << "Use ATM (Y/N): ";
+        std::cout << "Use ATM (Y/N)? ";
         std::cin >> choice;
         
         if (isInputNotValid()) {
