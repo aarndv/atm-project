@@ -1,7 +1,7 @@
 
-# ATM System in C++
+# HaBank Buhay ATM System in C++
 
-A console-based ATM system built in C++ that simulates basic banking operations. The system supports account creation, PIN-encrypted login, deposits, withdrawals, bill payments, loan calculations, and transaction logging. Based in Peso.
+A robust console-based ATM system developed in C++ that simulates essential banking operations, with all transactions handled in Philippine Pesos (₱). This project was created in compliance with the final project requirements for CCS0015 Data Structures and Algorithm.
 
 **This is created in compliance for CCS0015 Data Structures and Algorithm's final project.**
 
@@ -9,7 +9,7 @@ A console-based ATM system built in C++ that simulates basic banking operations.
 
 ## Features
 
-- **Encrypted PIN-based login system**: Secure user authentication.
+- **Secure Authentication**: Log in with an encrypted PIN (4-digit, alphanumeric) for secure access to your account.
 - **Deposit, Withdraw, and Balance checking**: Core banking functionalities.
 - **Transaction logging with reference IDs**: Keeps a detailed history of all account activities.
 - **Bill payment and internal transfers**: Facilitates paying bills and sending money to other users.
