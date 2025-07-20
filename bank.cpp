@@ -230,17 +230,12 @@ void ATMUser::transferMoney(Users &users) {
     while (true) {
         std::cout << "Enter amount to transfer: ";
         std::cin >> amount;
-        if (isInputNotValid()) {
-            std::cout << INVALID_MSG << std::endl;
-            continue;
-        }
-        else if (amount > getBalance()) {
+        if (isInputNotValid())
+            std::cout << INVALID_MSG_AMOUNT << std::endl;
+        else if (amount > getBalance())
             std::cout << "Insufficient Balance. Try again.\n";
-            continue;
-        }
-        else {
+        else
             break;
-        }
     }
     if (amount < MIN_TRANSFER || amount > MAX_TRANSFER) 
         std::cout << "Invalid transfer amount. Must be between " << MIN_TRANSFER<< " and " << MAX_TRANSFER << std::endl;
