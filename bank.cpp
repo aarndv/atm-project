@@ -679,6 +679,8 @@ void Menu::loanMenu(ATMUser &user, Users &users) {
 bool Menu::mainMenuGreetings() {
     char choice;
 
+    std::cout << "Welcome to " << BANK_NAME << "! Your trusted banking partner.\n";
+    std::cout << std::endl;
     std::cout << "===" << BANK_NAME <<"===\n"; 
     do {
         std::cout << "Use ATM (Y/N)? ";
@@ -755,6 +757,7 @@ void Menu::bankMenu(ATMUser &user, Users &users) {
             transactionLog(user, users);
             break;
         case 5:
+            std::cout << "Thank you for banking with HaBank Buhay. Have a great day!\n";
             return;
     }
 
@@ -766,7 +769,7 @@ void Menu::myAccount(ATMUser &user, Users &users) {
     float amount;
 
     do {
-        std::cout << "MY ACCOUNT OPTIONS\n";
+        std::cout << "---[ ACCOUNT SERVICES ]---\n";
         std::cout << BAR << "\n";
         std::cout << "[1] - Withdraw\n";
         std::cout << "[2] - Deposit\n";
@@ -804,7 +807,7 @@ void Menu::myAccount(ATMUser &user, Users &users) {
 void Menu::billsAndTransfer(ATMUser &user, Users &users) {
     int choice;
     do {
-        std::cout << "BILLS AND TRANSFER\n";
+        std::cout << "---[ BILLS AND TRANSFER ]---\n";
         std::cout << BAR << "\n";
         std::cout << "[1] - Pay Bills\n";
         std::cout << "[2] - Transfer Money\n";
@@ -839,7 +842,7 @@ void Menu::transactionLog(ATMUser &user, Users &users) {
     int choice;
 
     do {
-        std::cout << "TRANSACTION LOGS\n";
+        std::cout << "---[ TRANSACTION LOGS ]---\n";
         std::cout << BAR << "\n";
         std::cout << "[1] - View Logs\n";
         std::cout << "[2] - Return\n";
