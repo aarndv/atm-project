@@ -376,7 +376,7 @@ ATMUser *Users::loginPrompt() {
     std::string userID, enteredPIN;
     bool idFound = false, PINCorrect = false;
     ATMUser *user = nullptr;
-    int tries = 0;
+    int pinTries = 0, idTries = 0;
 
     do {
         std::cout << "Enter userID (####-####): ";
@@ -385,8 +385,8 @@ ATMUser *Users::loginPrompt() {
         user = findUserByID(userID);
         if (!user) {
             std::cout << "userID does not exist.\n";
-            tries++;
-            if (tries >= MAX_ID_TRIES) {
+            idTries++;
+            if (idTries >= MAX_ID_TRIES) {
                 std::cout << "\nMaximum failed User ID attempts reached.\n";
                 std::cout << "Exiting.\n";
                 return nullptr;
@@ -406,6 +406,12 @@ ATMUser *Users::loginPrompt() {
             PINCorrect = true;
         } else {
             std::cout << "Invalid PIN.\n";
+            pinTries++;
+            if (pinTries >= MAX_PIN_TRIES) {
+                std::cout << "\nMaximum failed PIN attempts reached.\n";
+                std::cout << "Exiting.\n";
+                return nullptr;
+            }
         }
     } while (!PINCorrect);
 
