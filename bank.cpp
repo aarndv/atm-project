@@ -13,6 +13,7 @@ constexpr double MIN_WITHDRAW = 100;
 constexpr double MIN_BILL_AMOUNT = 100;
 constexpr double MIN_TRANSFER = 100;
 constexpr double MAX_TRANSFER = 50000;
+constexpr int MAX_PIN_TRIES = 4;
 constexpr int MAX_ID_TRIES = 3;
 constexpr int PIN_LENGTH = 4;
 
