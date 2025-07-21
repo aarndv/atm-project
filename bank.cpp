@@ -16,6 +16,7 @@ constexpr double MAX_TRANSFER = 50000;
 constexpr int MAX_PIN_TRIES = 4;
 constexpr int MAX_ID_TRIES = 3;
 constexpr int PIN_LENGTH = 4;
+constexpr double INTEREST_RATE = 1.5;
 
 // Helper Constants
 constexpr const char *BAR = "=========================";
@@ -647,32 +648,109 @@ void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
     return;
 }
 
-// ==================== @Sinang ====================
-// Handles: Loan System (calculation and interface)
-
-// LoanCash()
-// Description: Prompts user for principal, rate, duration, Calculates payable amount.
-// Output:: Print payable amount with interest
-void ATMUser::loanCash(Users &users) {
-    // TODO:
-
-    // Asks user for input (principal, annual interest rate, loan duration)
-    // VALIDATE THE INPUTS (POSITIVE NUMBERS AND INTEGERS)
-    // Call calculateLoan(principal, rate, duration)
-    // Display: "Total Payable after x years: P11000.00"
-    // Asks if they want to borrow (Y/N)?
-    // IF SO: add this line: addLog("Loan", principal, "Loan borrowed", ref, "")
+bool ATMUser::hasOutstandingLoan() const {
+    for (const Log &loanLog : logs) {
+        if (loanLog.getType() == "Loan" && loanLog.getMessage() == "Loan borrowed") {
+            bool paid = false;
+            for (const Log &payLog : logs) {
+                if (payLog.getType() == "Loan Paid" && payLog.getRefNumber() == loanLog.getRefNumber()) {
+                    paid = true;
+                    break;
+                }
+            }
+            if (!paid) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-// calculateLoan(principal, rate, durationYears)
-// Returns total loan payment due using simple interest formula
-// Output: double (total payable amount)
-double ATMUser::calculateLoan(double principal, double rate, double durationYears) {
-    // Simple interest whatever
-    return 0.0; // Placeholder
+void ATMUser::getLoanDetails(double &principal, double &durationYears) {
+    std::cout << "---[ LOAN SERVICE ]---\n";
+    std::cout << "Welcome to the Loan Service!\n";
+    std::cout << BAR << "\n";
+
+    while (true) {
+        std::cout << "Enter amount to borrow: ";
+        std::cin >> principal;
+        if (isInputNotValid() || principal <= 0) {
+            std::cout << "Invalid input. Please enter a positive number.\n";
+        } else {
+            break;
+        }
+    }
+
+    while (true) {
+        std::cout << "Enter loan duration years: ";
+        std::cin >> durationYears;
+        if (isInputNotValid() || durationYears <= 0) {
+            std::cout << "Invalid input. Please enter a positive integer.\n";
+        } else {
+            break;
+        }
+    }
+}
+
+bool ATMUser::presentLoanAndConfirm(double principal, double totalPayable, double monthlyPayment, double durationYears) const {
+    std::cout   << "\nTotal Payable after " << durationYears << " years: Php. " 
+                << std::fixed << std::setprecision(2) << totalPayable << '\n';
+    
+    std::cout << "Monthly Payment: Php. " << std::fixed << std::setprecision(2) << monthlyPayment << "\n\n";
+
+    char confirm;
+    do {
+        std::cout << "Do you want to borrow this loan? (Y/N): ";
+        std::cin >> confirm;
+        if (isInputNotValid() || (tolower(confirm) != 'y' && tolower(confirm) != 'n')) {
+            std::cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+            continue;
+        }
+    } while (tolower(confirm) != 'y' && tolower(confirm) != 'n');
+
+    return tolower(confirm) == 'y';
+}
+
+void ATMUser::processApprovedLoan(double principal, Users &users) {
+    setBalance(getBalance() + principal);
+    addLog(users, "Loan", principal, "Loan borrowed", "");
+    std::cout << "\nLoan successfully borrowed! Php. " << principal << " has been added to your balance.\n";
+    std::cout << "Your new balance is Php. " << std::fixed << std::setprecision(2) << getBalance() << ".\n\n";
+}
+
+double ATMUser::calculateLoan(double principal, double interestRate, double durationYears) {
+    std::cout << "Debug:\n";
+    std::cout << "[PRINCIPAL]: " << principal << std::endl;
+    std::cout << "[INTEREST_RATE]: " << interestRate << std::endl;
+    std::cout << "[DURATION YEARS]: " << durationYears << std::endl;
+    double totalInterest = principal * (interestRate / 100) * durationYears;
+    return principal + totalInterest;
+}
+
+void ATMUser::loanCash(Users &users) {
+    if (hasOutstandingLoan()) {
+        std::cout << "You have an ongoing loan. Please pay it off before applying for a new one.\n";
+        return;
+    }
+
+    double principal = 0.0;
+    double durationYears = 0.0;
+
+    getLoanDetails(principal, durationYears);
+
+    double totalPayable = calculateLoan(principal, INTEREST_RATE, durationYears);
+    double monthlyPayment = totalPayable / (durationYears * 12);
+
+    if (presentLoanAndConfirm(principal, totalPayable, monthlyPayment, durationYears)) {
+        processApprovedLoan(principal, users);
+    } else {
+        std::cout << "Loan cancelled.\n";
+    }
 }
 
 void Menu::loanMenu(ATMUser &user, Users &users) {
+    user.loanCash(users);
+    system("pause");
     return;
 }
 
