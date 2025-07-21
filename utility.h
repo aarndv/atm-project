@@ -22,17 +22,19 @@ bool isPinValid(const std::string &input) {
     return true;
 }
 
-bool isInputNotValid() {
+bool isInputValid() {
     if (std::cin.fail()) {
         std::cin.clear();
-        char ch;
-        while (std::cin.get(ch) && ch != '\n');
-        fflush(stdin);
-        std::cin.ignore(10000, '\n');
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return false;
+    }
         return true;
     }
-    return false;
+
+bool isInputNotValid() {
+    return !isInputValid();
 }
+
 
 std::string padNumber(int number, int width) {
     std::string numStr = std::to_string(number);
