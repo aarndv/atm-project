@@ -43,6 +43,11 @@ private:
 
     double calculateLoan(double principal, double rate, double durationYears);
 
+    bool hasOutstandingLoan() const;
+    void getLoanDetails(double &principal, double &durationYears);
+    bool presentLoanAndConfirm(double principal, double totalPayable, double monthlyPayment, double durationYears) const;
+    void processApprovedLoan(double principal, Users &users);
+
     string encryptPin(const string &plainPin) const;
     string decryptPin(const string &cipheredPin) const;
 
