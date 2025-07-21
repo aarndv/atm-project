@@ -28,8 +28,8 @@ bool isInputValid() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return false;
     }
-        return true;
-    }
+    return true;
+}
 
 bool isInputNotValid() {
     return !isInputValid();
