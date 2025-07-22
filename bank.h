@@ -7,6 +7,30 @@
 
 using namespace std;
 
+// Structs
+struct Loan {
+    double loanPrincipal;
+    double loanTotalPayable;
+    double loanDurationYears;
+    double monthlyPayment;
+    bool paid;
+
+    Loan() {
+        loanPrincipal = 0.0;
+        loanTotalPayable = 0.0;
+        loanDurationYears = 0.0;
+        monthlyPayment = 0.0;
+        paid = false;
+    }
+    Loan(double lP, double lTP, double lDY, double mP) {
+        loanPrincipal = lP;
+        loanTotalPayable = lTP;
+        loanDurationYears = lDY;
+        monthlyPayment = mP;
+        paid = false;
+    }
+};
+
 class Users;
 
 class Log
@@ -15,9 +39,14 @@ private:
     string type, message, refNumber, recipientID;
     double amount;
 
+    bool isLoanEntry;
+    
 public:
+    Loan loanDetails;
+
     Log();
     Log(string type, double amount, string message="", string ref="", string referenceID="");
+    Log(string type, double amount, string message, string ref, string referenceID, const Loan &loan);
 
     void displayReceipt() const;
 
@@ -26,12 +55,16 @@ public:
     string getMessage() const;
     string getRefNumber() const;
     string getRecipientID() const;
+    bool getIsLoanEntry() const;
+    Loan getLoanDetails() const;
 
     void setType(const string &type);
     void setAmount(double amount);
     void setMessage(const string &msg);
     void setRefNumber(const string &ref);
     void setRecipientID(const string &rid);
+    void setIsLoanEntry(bool isLoan);
+    void setLoanDetails(const Loan &loan);
 };
 
 class ATMUser {
@@ -46,7 +79,6 @@ private:
     bool hasOutstandingLoan() const;
     void getLoanDetails(double &principal, double &durationYears);
     bool presentLoanAndConfirm(double principal, double totalPayable, double monthlyPayment, double durationYears) const;
-    void processApprovedLoan(double principal, Users &users);
 
     string encryptPin(const string &plainPin) const;
     string decryptPin(const string &cipheredPin) const;
@@ -76,6 +108,7 @@ public:
     void payBills(Users &users);
     void transferMoney(Users &users);
     void loanCash(Users &users);
+    void payLoan(Users &users);
     void displayBalance();
     void convertBalanceToOtherCurrency(string currency);
 
