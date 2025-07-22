@@ -778,7 +778,18 @@ void ATMUser::loanCash(Users &users) {
     double monthlyPayment = totalPayable / (durationYears * 12);
 
     if (presentLoanAndConfirm(principal, totalPayable, monthlyPayment, durationYears)) {
-        processApprovedLoan(principal, users);
+        setBalance(getBalance() + principal);
+
+        Loan newLoan(principal, totalPayable, durationYears, monthlyPayment);
+        newLoan.paid = false;
+
+        std::string ref = users.generateRefNumber();
+        Log loanLogEntry("Loan", principal, "Loan borrowed", ref, "", newLoan);
+        logs.push_back(loanLogEntry);
+
+        std::cout << "\nLoan successfully borrowed! Php. " << principal << " has been added to your balance.\n";
+        std::cout << "Your new balance is Php. " << std::fixed << std::setprecision(2) << getBalance() << ".\n\n";
+        displayReceipt();
     } else {
         std::cout << "Loan cancelled.\n";
     }
