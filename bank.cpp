@@ -385,17 +385,41 @@ void ATMUser::loadLogs() {
         std::string line;
         while (getline(fin, line)) {
             std::stringstream ss(line);
-            std::string type, amountStr, message, ref, recipient;
+            std::string type, amountStr, message, ref, recipient, isLoanEntryStr;
             getline(ss, type, ',');
             getline(ss, amountStr, ',');
             getline(ss, message, ',');
             getline(ss, ref, ',');
             getline(ss, recipient, ',');
+            getline(ss, isLoanEntryStr, ',');
 
             double amount = std::stod(amountStr);
+            bool isLoan = (isLoanEntryStr == "1");
 
-            Log log(type, amount, message, ref, recipient);
-            logs.push_back(log);
+            if (isLoan) {
+                std::string principalStr, totalPayableStr, durationYearsStr, monthlyPaymentStr, paidStr;
+            
+                getline(ss, principalStr, ',');
+                getline(ss, totalPayableStr, ',');
+                getline(ss, durationYearsStr, ',');
+                getline(ss, monthlyPaymentStr, ',');
+                getline(ss, paidStr);
+
+                double principal = std::stod(principalStr);
+                double totalPayable = std::stod(totalPayableStr);
+                double durationYears = std::stod(durationYearsStr);
+                double monthlyPayment = std::stod(monthlyPaymentStr);
+                bool paid = (paidStr == "1");
+
+                Loan loadedLoan(principal, totalPayable, durationYears, monthlyPayment);
+                loadedLoan.paid = paid;
+
+                Log logEntry(type, amount, message, ref, recipient, loadedLoan);
+                logs.push_back(logEntry);
+            } else {
+                Log logEntry(type, amount, message, ref, recipient);
+                logs.push_back(logEntry);
+            }
         }
         fin.close();
     } else {
