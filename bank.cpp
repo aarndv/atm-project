@@ -593,23 +593,19 @@ void ATMUser::viewLogs() {
 
 void ATMUser::addLog(Users &users, std::string type, double amount, std::string message, std::string referenceID) {
     std::string ref;
-    ref = users.generateRefNumber();
+    if (referenceID.empty()) 
+        ref = users.generateRefNumber();
+    else 
+        ref = referenceID;
 
     if (message.empty())
-    {
         message = "N/A";
-    }
 
     Log newLog = Log(type, amount, message, ref, referenceID);
     logs.push_back(newLog);
 }
 
-// convertBalanceToOtherCurrency(currency)
-// currency: a string representing a currency code (e.g., "USD", "JPY", "PHP")
-// Output: prints equivalent amount in that currency
 void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
-    // TODO:
-
     for (char &c : currency) c = toupper(c);
 
     double rate = 1.0;
