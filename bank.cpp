@@ -346,7 +346,7 @@ void ATMUser::saveLogs() {
     std::string folder = "data/" + userID;
     std::string path = folder + "/" + userID + "-log.csv";
 
-    if (std::filesystem::exists(folder)) {
+    if (!std::filesystem::exists(folder)) {
         std::filesystem::create_directories(folder);
     }
 
