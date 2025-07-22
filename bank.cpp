@@ -795,6 +795,79 @@ void ATMUser::loanCash(Users &users) {
     }
 }
 
+void ATMUser::payLoan(Users &users) {
+    std::cout << "\n---[ LOAN PAYMENT SERVICE ]---\n";
+    std::cout << "Welcome to the Loan Payment Service!\n";
+    std::cout << BAR << "\n";
+
+    Log *outstandingLoanLogEntry = nullptr;
+    for (Log &logEntry : logs) {
+        if (logEntry.getIsLoanEntry() && !logEntry.getLoanDetails().paid) {
+            outstandingLoanLogEntry = &logEntry;
+            break;
+        }
+    }
+
+    if (!outstandingLoanLogEntry) {
+        std::cout << "You currently have no outstanding loans to pay.\n";
+        return;
+    }
+
+    std::cout << "Your current outstanding loan details:\n";
+    std::cout << "  Principal: Php. " << std::fixed << std::setprecision(2) << outstandingLoanLogEntry->getLoanDetails().loanPrincipal << "\n";
+    std::cout << "  Total Payable (Remaining): Php. " << std::fixed << std::setprecision(2) << outstandingLoanLogEntry->getLoanDetails().loanTotalPayable << "\n";
+    std::cout << "  Monthly Payment: Php. " << std::fixed << std::setprecision(2) << outstandingLoanLogEntry->getLoanDetails().monthlyPayment << "\n";
+
+    double paymentAmount;
+    while (true) {
+        std::cout << "Enter amount to pay: Php. ";
+        std::cin >> paymentAmount;
+        if (isInputNotValid() || paymentAmount <= 0) {
+            std::cout << "Invalid input. Please enter a positive number.\n";
+        } else if (paymentAmount > getBalance()) {
+            std::cout << "Insufficient balance to make this payment. Your balance: Php. " << getBalance() << "\n";
+        } else if (paymentAmount > outstandingLoanLogEntry->getLoanDetails().loanTotalPayable) {
+            std::cout << "Payment amount exceeds the remaining loan balance. You can pay up to Php. " << std::fixed << std::setprecision(2) << outstandingLoanLogEntry->getLoanDetails().loanTotalPayable << ".\n";
+        } else {
+            break;
+        }
+    }
+
+    char confirm;
+    do {
+        std::cout << "Confirm payment of Php. " << std::fixed << std::setprecision(2) << paymentAmount << "? (Y/N): ";
+        std::cin >> confirm; 
+        if (isInputNotValid() || (tolower(confirm) != 'y' && tolower(confirm) != 'n')) {
+            std::cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+        }
+    } while (tolower(confirm) != 'y' && tolower(confirm) != 'n');
+
+    if (tolower(confirm) == 'y') {
+        setBalance(getBalance() - paymentAmount);
+        outstandingLoanLogEntry->loanDetails.loanTotalPayable -= paymentAmount;
+
+        if (outstandingLoanLogEntry->loanDetails.loanTotalPayable <= 0) {
+            outstandingLoanLogEntry->loanDetails.paid = true;
+        }
+
+        std::string message = "Loan payment";
+        if (outstandingLoanLogEntry->loanDetails.paid) {
+            message = "Loan fully paid";
+            std::cout << "Congratulations! Your loan is now fully paid.\n";
+        }
+    
+        addLog(users, "Loan Payment", paymentAmount, message, outstandingLoanLogEntry->getRefNumber());
+
+        std::cout << "Payment successful. Your new balance: Php. " << std::fixed << std::setprecision(2) << getBalance() << "\n";
+        if (!outstandingLoanLogEntry->loanDetails.paid) {
+            std::cout << "Remaining Loan balance: Php. " << std::fixed << std::setprecision(2) << outstandingLoanLogEntry->loanDetails.loanTotalPayable << "\n";
+        }
+        displayReceipt();
+    } else {
+        std::cout << "Loan payment cancelled.\n";
+    }
+}
+
 void Menu::loanMenu(ATMUser &user, Users &users) {
     user.loanCash(users);
     system("pause");
