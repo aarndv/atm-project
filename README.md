@@ -1,22 +1,21 @@
 
 # HaBank Buhay ATM System in C++
 
-A robust console-based ATM system developed in C++ that simulates essential banking operations, with all transactions handled in Philippine Pesos (₱). This project was created in compliance with the final project requirements for CCS0015 Data Structures and Algorithm.
+A robust console-based ATM system developed in C++ that simulates essential banking operations, with all transactions handled in Philippine Pesos (₱).
 
-**This is created in compliance for CCS0015 Data Structures and Algorithm's final project.**
-
+This project was created in compliance with the final project requirements for CCS0015 Data Structures and Algorithm.
 ---
 
 ## Features
 
-- **Secure Authentication**: Log in with an encrypted PIN (4-digit, alphanumeric) for secure access to your account.
-- **Deposit, Withdraw, and Balance checking**: Core banking functionalities.
-- **Transaction logging with reference IDs**: Keeps a detailed history of all account activities.
-- **Bill payment and internal transfers**: Facilitates paying bills and sending money to other users.
-- **Currency conversion (USD, JPY, SKW, INR)**: Allows users to see their balance in different currencies.
-- **Loan calculator with simple interest**: Enables users to calculate potential loan payments.
-- **File-based data persistence (`CSV` format)**: All user data and transaction logs are saved and loaded from files.
-- **Organized user data**: Each user's data is stored in a dedicated `data/[userID]` folder.
+- **Secure Authentication**: Log in with an encrypted 4-digit alphanumeric PIN for secure account access.
+- **Core Banking**: Perform deposits, withdrawals, and check your balance.
+- **Comprehensive Transaction Logging**: A detailed history of all account activities is maintained with unique reference IDs.
+- **Bills & Transfers**: Conveniently pay bills and send money via internal transfers to other users.
+- **Currency Conversion**: View your balance converted to USD, JPY, SKW, or INR.
+- **Loan Services**: Apply for and manage loans with a built-in simple interest calculator and payment functionality.
+- **Data Persistence**: All user data and transaction logs are securely saved and loaded using CSV files.
+- **Organized User Data**: Each user's data is neatly stored in a dedicated data/[userID] folder.- **Secure Authentication**: Log in with an encrypted PIN (4-digit, alphanumeric) for secure access to your account.
 
 ---
 
@@ -48,22 +47,18 @@ A robust console-based ATM system developed in C++ that simulates essential bank
 
 ## Build Instructions
 
-Navigate to the installation directory and run the following:
+To compile and run the ATM system, navigate to the project's root directory in your terminal and execute the following commands.
 
 ```bash
-g++ -std=c++17 -o atm main.cpp bank.cpp utility.cpp # Assuming utility.cpp exists for utility.h functions
-./atm
+# For Linux/macOS
+g++ -std=c++17 -o atm main.cpp bank.cpp
+
+# For Windows (using MinGW)
+g++ -std=c++17 -o atm.exe main.cpp bank.cpp
+./atm.exe
 ```
 
-Note: utility.h contains function definitions. If these functions are not inline or template functions, you'll need to compile a utility.cpp file that includes utility.h and defines these functions. If they are intended to be header-only, they should be marked inline. For this setup, assuming a utility.cpp for best practice.
-
-Requires a C++17-compatible compiler. Tested on MinGW & Linux g++.
-
-If you're using cmd:
-```bash
-g++ main.cpp bank.cpp utility.cpp -o atm.exe
-atm.exe
-```
+**Note**: This project requires a C++17-compatible compiler (e.g., g++). 
 
 ## Notes
 
@@ -72,8 +67,10 @@ atm.exe
 - PINs are encrypted using a Caesar cipher-like shift
 
 ## Sample Test Scenarios
-- Create a new account and set a PIN (e.g., 1234).
-- Deposit money (e.g., ₱1000) and then withdraw some (e.g., ₱500).
-- Pay a hypothetical bill (e.g., "Electricity" for ₱300).
-- View your transaction log and explore currency-converted balances (e.g., in USD, JPY, SKW, INR).
-- Inspect the generated user data and log files within the data/ directory.- Create an account with PIN 1234
+- **Account Creation**: Create a new account and set a PIN (e.g., 1234).
+- **Basic Transactions**: Deposit funds (e.g., ₱1000) and then make a withdrawal (e.g., ₱500).
+- **Bill Payment**: Pay a hypothetical bill (e.g., "Electricity" for ₱300).
+- **Fund Transfer**: Transfer money to another user's account.
+- **View History**: Check your transaction log and explore currency-converted balances (e.g., in USD, JPY, SKW, INR).
+- **Loan Management**: Apply for a loan, observe the terms, and make a payment.
+- **Data Inspection**: Verify the generated user data and log files within the data/ directory.
