@@ -46,6 +46,7 @@ Log::Log() {
     this->message = "";
     this->refNumber = "";
     this->recipientID = "";
+    this->isLoanEntry = false;
 }
 
 Log::Log(std::string type, double amount, std::string message, std::string ref, std::string recipient) {
@@ -54,6 +55,17 @@ Log::Log(std::string type, double amount, std::string message, std::string ref, 
     this->message = message;
     this->refNumber = ref;
     this->recipientID = recipient;
+    this->isLoanEntry = false;
+}
+
+Log::Log(string type, double amount, string message, string ref, string referenceID, const Loan &loan) {
+    this->loanDetails = loan;
+    this->type = type;
+    this->amount = amount;
+    this->message = message;
+    this->refNumber = ref;
+    this->recipientID = referenceID;
+    this->isLoanEntry = true;
 }
 
 Users::Users() {
@@ -92,6 +104,9 @@ std::string Log::getRefNumber() const { return refNumber; }
 std::string Log::getRecipientID() const { return recipientID; }
 std::string ATMUser::getEncryptedPIN() const { return PIN; }
 
+bool Log::getIsLoanEntry() const { return isLoanEntry; }
+Loan Log::getLoanDetails() const {return loanDetails; }
+
 // Setter
 void ATMUser::setID(const std::string &id) { userID = id; }
 void ATMUser::setUsername(const std::string &uname) { username = uname; }
@@ -106,6 +121,11 @@ void Log::setMessage(const std::string &msg) { message = msg; }
 void Log::setRefNumber(const std::string &ref) { refNumber = ref; }
 void Log::setRecipientID(const std::string &rid) { recipientID = rid; }
 
+void Log::setIsLoanEntry(bool isLoan) { isLoanEntry = isLoan; }
+void Log::setLoanDetails(const Loan &loan) { loanDetails = loan; }
+
+
+//
 void ATMUser::deposit(Users &users) {
     char choice;
     double balance;
