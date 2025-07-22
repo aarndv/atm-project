@@ -149,6 +149,7 @@ public:
     void bankMenu(ATMUser &user, Users &users);
     void myAccount(ATMUser &user, Users &users);
     void billsAndTransfer(ATMUser &user, Users &users);
+    void conversionMenu(ATMUser &user, Users &users);
     void loanMenu(ATMUser &user, Users &users);
     void transactionLog(ATMUser &user, Users &users);
     int showLoginMenu();
