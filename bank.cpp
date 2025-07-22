@@ -701,18 +701,9 @@ void ATMUser::convertBalanceToOtherCurrency(std::string currency) {
 }
 
 bool ATMUser::hasOutstandingLoan() const {
-    for (const Log &loanLog : logs) {
-        if (loanLog.getType() == "Loan" && loanLog.getMessage() == "Loan borrowed") {
-            bool paid = false;
-            for (const Log &payLog : logs) {
-                if (payLog.getType() == "Loan Paid" && payLog.getRefNumber() == loanLog.getRefNumber()) {
-                    paid = true;
-                    break;
-                }
-            }
-            if (!paid) {
-                return true;
-            }
+    for (const Log &logEntry : logs) {
+        if (logEntry.getIsLoanEntry() && !logEntry.getLoanDetails().paid) {
+            return true;
         }
     }
     return false;
