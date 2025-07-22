@@ -357,7 +357,18 @@ void ATMUser::saveLogs() {
                 << log.getAmount() << ","
                 << log.getMessage() << ","
                 << log.getRefNumber() << ","
-                << log.getRecipientID() << "\n";
+                << log.getRecipientID() << ",";
+
+            fout << (log.getIsLoanEntry() ? "1" : "0") << ",";
+
+            if (log.getIsLoanEntry()) {
+                fout << log.getLoanDetails().loanPrincipal << ","
+                     << log.getLoanDetails().loanTotalPayable << ","
+                     << log.getLoanDetails().loanDurationYears << ","
+                     << log.getLoanDetails().monthlyPayment << ","
+                     << (log.getLoanDetails().paid ? "1" : "0");
+            }
+            fout << "\n";
         }
         fout.close();
     } else {
