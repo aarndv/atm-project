@@ -869,9 +869,34 @@ void ATMUser::payLoan(Users &users) {
 }
 
 void Menu::loanMenu(ATMUser &user, Users &users) {
-    user.loanCash(users);
-    system("pause");
-    return;
+    int choice;
+    do {
+        std::cout << "\n---[ LOAN SERVICES ]---\n";
+        std::cout << BAR << "\n";
+        std::cout << "[1] - Borrow Loan\n";
+        std::cout << "[2] - Pay Loan\n";
+        std::cout << "[3] - Return\n";
+        std::cout << "Choose an Option: ";
+        std::cin >> choice;
+        
+        if (isInputNotValid()) {
+            std::cout << "Invalid input\n";
+            continue;
+        }
+        if (choice > 3 || choice < 1) 
+            std::cout << "Invalid Option.\n";
+    } while (choice > 3 || choice < 1);
+
+    switch (choice) {
+        case 1:
+            user.loanCash(users);
+            break;
+        case 2:
+            user.payLoan(users);
+            break;
+        case 3:
+            return;
+    }
 }
 
 bool Menu::mainMenuGreetings() {
