@@ -755,10 +755,6 @@ bool ATMUser::presentLoanAndConfirm(double principal, double totalPayable, doubl
 }
 
 double ATMUser::calculateLoan(double principal, double interestRate, double durationYears) {
-    std::cout << "Debug:\n";
-    std::cout << "[PRINCIPAL]: " << principal << std::endl;
-    std::cout << "[INTEREST_RATE]: " << interestRate << std::endl;
-    std::cout << "[DURATION YEARS]: " << durationYears << std::endl;
     double totalInterest = principal * (interestRate / 100) * durationYears;
     return principal + totalInterest;
 }
@@ -999,7 +995,8 @@ void Menu::myAccount(ATMUser &user, Users &users) {
         std::cout << "[1] - Withdraw\n";
         std::cout << "[2] - Deposit\n";
         std::cout << "[3] - Check Balance\n";
-        std::cout << "[4] - Return\n";
+        std::cout << "[4] - Convert Balance\n";
+        std::cout << "[5] - Return\n";
         std::cout << "Choose an Option: "; 
         std::cin >> choice;
 
@@ -1025,6 +1022,47 @@ void Menu::myAccount(ATMUser &user, Users &users) {
             user.displayBalance();
             break;
         case 4:
+            conversionMenu(user, users);
+            break;
+        case 5:
+            return;
+    }
+}
+
+void Menu::conversionMenu(ATMUser &user, Users &users) {
+    int choice;
+    do {
+        std::cout << "\n---[ CONVERSION MENU]---\n";
+        std::cout << "[1] - US Dollars\n";
+        std::cout << "[2] - Japanese Yen\n";
+        std::cout << "[3] - Korean Won\n";
+        std::cout << "[4] - Indian Rupees\n";
+        std::cout << "[5] - Return\n";
+        std::cout << "Choose an Option: ";
+        std::cin >> choice;
+        
+        if (isInputNotValid()) {
+            std::cout << "Invalid input\n";
+            continue;
+        }
+        else if (choice > 5 || choice < 1)
+            std::cout << "Invalid option.\n";
+    } while (choice > 5 || choice < 1);
+
+    switch (choice) {
+        case 1:
+            user.convertBalanceToOtherCurrency("USD");
+            break;
+        case 2:
+            user.convertBalanceToOtherCurrency("JPY");
+            break;
+        case 3:
+            user.convertBalanceToOtherCurrency("SKW");
+            break;
+        case 4:
+            user.convertBalanceToOtherCurrency("INR");
+            break;
+        case 5:
             return;
     }
 }
