@@ -24,6 +24,7 @@ constexpr const char *BANK_NAME = "HaBank Buhay";
 constexpr const char *INVALID_MSG = "Invalid input.";
 constexpr const char *INVALID_MSG_AMOUNT = "That's not a valid number. Please enter a numerical value.";
 
+
 // Constructors 
 ATMUser::ATMUser() {
     this->username = "";
