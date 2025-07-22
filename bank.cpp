@@ -710,8 +710,8 @@ bool ATMUser::hasOutstandingLoan() const {
 }
 
 void ATMUser::getLoanDetails(double &principal, double &durationYears) {
-    std::cout << "---[ LOAN SERVICE ]---\n";
-    std::cout << "Welcome to the Loan Service!\n";
+    std::cout << "---[ LOAN BORROWING SERVICE ]---\n";
+    std::cout << "Welcome to the Loan Borrowing Service!\n";
     std::cout << BAR << "\n";
 
     while (true) {
