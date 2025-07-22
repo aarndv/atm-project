@@ -754,13 +754,6 @@ bool ATMUser::presentLoanAndConfirm(double principal, double totalPayable, doubl
     return tolower(confirm) == 'y';
 }
 
-void ATMUser::processApprovedLoan(double principal, Users &users) {
-    setBalance(getBalance() + principal);
-    addLog(users, "Loan", principal, "Loan borrowed", "");
-    std::cout << "\nLoan successfully borrowed! Php. " << principal << " has been added to your balance.\n";
-    std::cout << "Your new balance is Php. " << std::fixed << std::setprecision(2) << getBalance() << ".\n\n";
-}
-
 double ATMUser::calculateLoan(double principal, double interestRate, double durationYears) {
     std::cout << "Debug:\n";
     std::cout << "[PRINCIPAL]: " << principal << std::endl;
